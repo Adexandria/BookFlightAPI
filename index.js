@@ -36,6 +36,9 @@ app.get("/api/flights",(req,res)=>{
 app.get("/api/flights/:id",(req,res)=>{
     let id = req.params.id;
     let filtered = flight.filter(item=>item.id==id);
+    if(!filtered){
+      res.status(404).send("Flight not found");
+    }
     res.send(filtered);
 });
 
