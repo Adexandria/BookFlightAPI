@@ -7,9 +7,9 @@ const routes = require("./routes/flightRoute");
 const app = express();
 
 app.use(json());
-
+app.use("/", routes);
 //A flight object
-const flight = [
+models.flight = [
 {
   id: 1,
   title: "flight to canada",
@@ -25,53 +25,67 @@ const flight = [
   date: "29-06-2022"
 }
 ]
-app.use("/", routes);
 
-// Get all fights
-app.get("/api/flights",(req,res)=>{
-  res.send(flight);
-});
+//controller to get the flight model
+flights.get =(req,res)=>{
+  res.send(models.flight);
+}
 
-//Get specific flight
-app.get("/api/flights/:id",(req,res)=>{
-    let id = req.params.id;
-    let filtered = flight.filter(item=>item.id==id);
-    if(!filtered){
-      res.status(404).send("Flight not found");
-    }
-    res.send(filtered);
-});
+//controller to get the flight by Id
+flights.getById =(req,res)=>{
+  let id = req.params.id;
+  let filtered = models.flight.filter(item=>item.id==id);
+  if(!filtered){
+    res.status(404).send("Flight not found");
+  }
+  res.send(filtered);
+}
 
-//Add new flight
-app.post("/api/flights",(req,res)=>{
-    let newFlight = req.body;
-    flight.push(newFlight);
-    res.send(flight);
-});
+//controller to add new flight object
+flights.addFlight =(req,res)=>{
+  let newFlight = req.body;
+  models.flight.push(newFlight);
+    res.send(models.flight);
+}
 
-//Update existing flight
-app.put("/api/flights/:id",(req,res)=>{
+//controller to update flight
+flights.updateFlight =(req,res)=>{
   let id = req.params.id;
   let updatedFlight = req.body;
-  let currentFlight = flight.find(item=>item.id==id);
+  let currentFlight = models.flight.find(item=>item.id==id);
   if(!currentFlight){
     res.status(404).send("Flight not found");
   }
-  flight[id] = updatedFlight;
-  res.send(flight);
-});
+  models.flight[id-1] = updatedFlight;
+  res.send(models.flight);
+}
 
-//Delete existing flight
-app.delete("/api/flights/:id",(req,res)=>{
-    let id = req.params.id;
-    let currentflight = flight.find(item=>item.id==id);
-    if(!currentflight){
-      res.status(404).send("Flight not found");
-    }
-    let index = flight.indexOf(currentflight);
-    flight.splice(index,1);
-    res.send(flight);
-});
+//controller to delete existing flight
+flights.deleteFlight = (req,res) =>{
+  let id = req.params.id;
+  let currentflight = models.flight.find(item=>item.id==id);
+  if(!currentflight){
+    res.status(404).send("Flight not found");
+  }
+  let index = models.flight.indexOf(currentflight);
+  models.flight.splice(index,1);
+  res.send(models.flight);
+}
+
+// route to get all fights
+routes.get("/api/flights",flights.get);
+
+//route to get specific flight
+routes.get("/api/flights/:id",flights.getById);
+
+//route to add new flight
+routes.post("/api/flights",flights.addFlight);
+
+//route to update existing flight
+routes.put("/api/flights/:id",flights.updateFlight);
+
+//route to delete existing flight
+routes.delete("/api/flights/:id",flights.deleteFlight);
 
 const port = process.env.PORT || 3000;
 
